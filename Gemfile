@@ -39,3 +39,10 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+
+gem 'jwt'
+gem 'dotenv-rails'
+gem 'rack-cors'
+gem 'rotp'
+gem 'twilio-ruby', '~> 6.0.1'
+gem 'active_model_serializers'
