@@ -1,10 +1,10 @@
 class Api::V1::OtpsController < ApplicationController
 
-	def create
+  def create
     phone = otp_params[:phone]
     otp_service = OtpService.new(phone)
-   
-		@user = otp_service.send_otp
+
+    @user = otp_service.send_otp
     if @user
       render json: { message: 'OTP sent successfully', user: @user }, status: :ok
     else
@@ -12,9 +12,9 @@ class Api::V1::OtpsController < ApplicationController
     end
   end
 
-	private
+  private
 
-	def otp_params
+  def otp_params
     params.permit(:id, :phone)
   end
 

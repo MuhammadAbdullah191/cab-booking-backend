@@ -6,7 +6,6 @@ class User < ApplicationRecord
   validates :phone, uniqueness: true, presence: true
   validates :username, presence: true, length: { minimum: 5, maximum: 25 }, on: :update
 
-
   def otp_valid?(otp)
     otp.present? && otp == self.otp.code && self.otp.expiration_time > Time.now
   end
