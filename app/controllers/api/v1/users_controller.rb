@@ -1,5 +1,7 @@
 class Api::V1::UsersController < ApplicationController
-
+  before_action :set_user, only: %i(update destroy)
+  skip_before_action :verify_token
+  
 	def index
     @users = User.all
     render json: { users: @users }, status: :ok
@@ -21,7 +23,19 @@ class Api::V1::UsersController < ApplicationController
     end
   end
 
+  def update
+    if @user.update(user_params)
+      render json: { user: UserSerializer.new(@user), message: 'User updated successfully' }, status: :ok
+    else
+      render json: { message: @user.errors.full_messages.to_sentence }, status: :unprocessable_entity
+    end
+  end
+
 	private
+
+  def set_user
+    @user = set_instance(user_params[:id], User, params[:type])
+  end
 
 	def login_user(user)
 		new_token = generate_user_token(user)
@@ -42,7 +56,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
 	def user_params
-    params.permit(:id, :phone, :username, :avatar, :query, :otp)
+    params.permit(:id, :phone, :username, :cnic, :license_number, :license_expiry)
   end
 
 end

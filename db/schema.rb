@@ -24,7 +24,10 @@ ActiveRecord::Schema.define(version: 2023_07_17_074136) do
   create_table "users", force: :cascade do |t|
     t.string "username", limit: 25, default: "", null: false
     t.string "phone", limit: 13, default: "", null: false
-    t.integer "role", default: 0
+    t.string "type", default: "", null: false
+    t.string "cnic"
+    t.string "license_number"
+    t.datetime "license_expiry"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
