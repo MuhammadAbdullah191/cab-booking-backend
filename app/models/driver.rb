@@ -3,5 +3,5 @@ class Driver < User
   validates :license_number, presence: true, length: { maximum: 20 }
   validates :license_expiry, presence: true
 
-  has_one :car
+  has_one :car, dependent: :destroy
 end

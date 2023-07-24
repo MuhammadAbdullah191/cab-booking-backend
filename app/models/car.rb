@@ -1,4 +1,5 @@
 class Car < ApplicationRecord
+  has_one :location, dependent: :destroy
   belongs_to :user
 
   validate :user_must_be_a_driver
