@@ -4,27 +4,28 @@ class OtpService
 
   def initialize(phone)
     @phone = phone
-    @user = User.find_or_initialize_by(phone: phone)
+    @client = Twilio::REST::Client.new(ENV['ACCOUNT_SID'], ENV['AUTH_TOKEN'])
+  end
+
+  def verify_otp(otp)
+    begin
+      verification_check = @client.verify.v2.services(ENV['SERVICE_SID']).verification_checks.create(to: '+923175098343', code:  otp)
+      if verification_check.status == 'approved'
+        return save_user
+      else
+        return {message: 'Invalid Otp, please try again', status: :unauthorized}
+      end
+
+    rescue StandardError => e
+      Rails.logger.error("Error sending OTP: #{e.message}")
+      return {message: e.message, status: :unauthorized}
+    end
   end
 
   def send_otp
     begin
-      if @user.new_record?
-        if @user.save
-          otp_code = generate_otp
-        else
-          raise StandardError, 'Failed to create user and send OTP'
-        end
-      else
-        otp_code = generate_otp
-      end
-      # @client = Twilio::REST::Client.new ENV['ACCOUNT_SID'], ENV['AUTH_TOKEN']
-      # message = @client.messages.create(
-      #   body: otp_code,
-      #   to: "+923175098343",
-      #   from: "+12545705743",
-      # )
-      return @user
+      verification = @client.verify.v2.services(ENV['SERVICE_SID']).verifications.create(to: '+923175098343', channel: 'sms')
+      return true
     rescue StandardError => e
       Rails.logger.error("Error sending OTP: #{e.message}")
       return false
@@ -33,20 +34,14 @@ class OtpService
 	
   private
 
-  def generate_otp
-    otp = @user.otp || @user.build_otp
-    otp.code = generate_otp_code
-    otp.expiration_time = Time.now + 59.minutes
-
-    if otp.save
-      return otp
-    else
-      raise StandardError, 'Failed to save OTP'
+  def save_user
+    @user = User.find_or_initialize_by(phone: @phone)
+    if @user.new_record?
+      if !@user.save
+        return {message: @user.errors.full_messages, status: :unauthorized}
+      end
     end
-  end
 
-  def generate_otp_code
-    totp = ROTP::TOTP.new(ENV['OTP_SECRET_KEY'])
-    totp.now
+    return {user: @user, message: 'Otp verified successfully', status: :ok}
   end
 end

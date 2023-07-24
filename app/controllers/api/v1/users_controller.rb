@@ -8,18 +8,12 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def create
-    phone = user_params[:phone]
-    user_otp = user_params[:otp]
-    user = User.find_by_phone(phone)
-
-    unless user
-      render json: { message: 'User not found' }, status: :not_found
-      return
-    end
-    if user.otp.present? && user.otp_valid?(user_otp)
-      login_user(user)
+    otp_service = OtpService.new(user_params[:phone])
+    @response = otp_service.verify_otp(user_params[:otp])
+    if @response[:status] == :ok
+      login_user(@response[:user])
     else
-      render json: { message: 'Invalid phone number or OTP' }, status: :unauthorized
+      render json: { message: @response[:message] }, status: @response[:status]
     end
   end
 
@@ -39,7 +33,6 @@ class Api::V1::UsersController < ApplicationController
 
   def login_user(user)
     new_token = generate_user_token(user)
-    user.otp.destroy
 
     render json: {
     message: 'Successfully Logged In',
@@ -56,7 +49,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def user_params
-    params.permit(:id, :phone, :username, :cnic, :license_number, :license_expiry)
+    params.permit(:id, :otp, :phone, :username, :cnic, :license_number, :license_expiry)
   end
 
 end

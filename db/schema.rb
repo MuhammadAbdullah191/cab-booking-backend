@@ -10,16 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_07_17_074136) do
-
-  create_table "otps", force: :cascade do |t|
-    t.string "code", default: "", null: false
-    t.datetime "expiration_time"
-    t.integer "user_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["user_id"], name: "index_otps_on_user_id"
-  end
+ActiveRecord::Schema.define(version: 2023_07_17_072834) do
 
   create_table "users", force: :cascade do |t|
     t.string "username", limit: 25, default: "", null: false
@@ -32,5 +23,4 @@ ActiveRecord::Schema.define(version: 2023_07_17_074136) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  add_foreign_key "otps", "users"
 end
