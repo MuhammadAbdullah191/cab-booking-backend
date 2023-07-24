@@ -10,7 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_07_17_072834) do
+ActiveRecord::Schema.define(version: 2023_07_21_105136) do
+
+  create_table "cars", force: :cascade do |t|
+    t.string "reg_number", default: "", null: false
+    t.string "make", default: "", null: false
+    t.string "model", default: "", null: false
+    t.integer "seats", default: 0, null: false
+    t.integer "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_cars_on_user_id"
+  end
+
+  create_table "locations", force: :cascade do |t|
+    t.decimal "latitude", null: false
+    t.decimal "longitude", null: false
+    t.integer "car_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["car_id"], name: "index_locations_on_car_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "username", limit: 25, default: "", null: false
@@ -23,4 +43,6 @@ ActiveRecord::Schema.define(version: 2023_07_17_072834) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "cars", "users"
+  add_foreign_key "locations", "cars"
 end
