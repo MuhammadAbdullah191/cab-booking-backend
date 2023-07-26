@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_07_21_105136) do
+ActiveRecord::Schema.define(version: 2023_07_25_111919) do
+
+  create_table "bookings", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "car_id", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["car_id"], name: "index_bookings_on_car_id"
+    t.index ["user_id"], name: "index_bookings_on_user_id"
+  end
 
   create_table "cars", force: :cascade do |t|
     t.string "reg_number", default: "", null: false
@@ -24,12 +34,12 @@ ActiveRecord::Schema.define(version: 2023_07_21_105136) do
   end
 
   create_table "locations", force: :cascade do |t|
-    t.decimal "latitude", null: false
-    t.decimal "longitude", null: false
-    t.integer "car_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["car_id"], name: "index_locations_on_car_id"
+    t.integer "status", default: 0, null: false
+    t.float "latitude"
+    t.float "longitude"
+    t.string "locationable_type", null: false
+    t.integer "locationable_id", null: false
+    t.index ["locationable_type", "locationable_id"], name: "index_locations_on_locationable_type_and_locationable_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -43,6 +53,7 @@ ActiveRecord::Schema.define(version: 2023_07_21_105136) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "bookings", "cars"
+  add_foreign_key "bookings", "users"
   add_foreign_key "cars", "users"
-  add_foreign_key "locations", "cars"
 end
