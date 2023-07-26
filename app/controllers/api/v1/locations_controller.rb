@@ -12,11 +12,11 @@ class Api::V1::LocationsController < ApplicationController
   end
 
   def set_car
-    @car = set_instance(location_params[:car_id], Car, '')
+    @car = set_instance(params[:car_id], Car, '')
   end
 
   def location_params
-    params.permit(:car_id, :latitude, :longitude)
+    params.permit(:latitude, :longitude)
   end
 
 end
